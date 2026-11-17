@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Session Summary -- AI Interview Practice Bot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Session Summary</h1>
+      <div class="score">{{ summary.overall_score }}%</div>
+      <div class="metrics">{{ summary.correct }} correct out of {{ summary.total }} questions
+        ({{ summary.answered }} answered)</div>
+
+      <div class="section-title">Category breakdown</div>
+      {% for cat, d in summary.category_breakdown.items() %}
+        <div class="cat-row"><span>{{ cat }}</span><span>{{ d.correct }} / {{ d.total }} ({{ d.percent }}%)</span></div>
+      {% endfor %}
+
+      <div class="section-title">Strengths</div>
+      <ul class="plain-list">{% for s in summary.strengths %}<li>{{ s }}</li>{% endfor %}</ul>
+
+      <div class="section-title">Areas to improve</div>
+      <ul class="plain-list">{% for s in summary.improvement_areas %}<li>{{ s }}</li>{% endfor %}</ul>
+
+      {% if summary.review %}
+        <div class="section-title">Review your mistakes</div>
+        {% for r in summary.review %}
+          <div class="review-item">
+            <strong>{{ r.question_text }}</strong><br>
+            Your answer: {{ r.selected_text or "(skipped)" }}<br>
+            Correct answer: {{ r.correct_text }}<br>
+            <em>{{ r.explanation }}</em>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <form action="{{ url_for('restart') }}" method="get">
+        <button type="submit">Practice Again</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

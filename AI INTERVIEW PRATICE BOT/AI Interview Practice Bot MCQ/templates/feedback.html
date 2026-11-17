@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feedback -- AI Interview Practice Bot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="progress">Question {{ index + 1 }} of {{ total }}</div>
+      <div class="question-text">{{ question.text }}</div>
+      <div class="verdict {{ 'ok' if result.correct else 'bad' }}">
+        {{ 'Correct!' if result.correct else 'Not quite.' }}
+      </div>
+
+      <div class="options">
+        {% for opt in question.options %}
+          {% set is_correct = loop.index0 == question.answer %}
+          {% set is_picked = result.selected_text == opt %}
+          <div class="option {{ 'correct' if is_correct else ('wrong' if is_picked else '') }}">
+            <span>{{ opt }}{% if is_correct %} &#10003;{% elif is_picked %} &#10007; (your answer){% endif %}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="explanation">{{ result.explanation }}</div>
+
+      <form action="{{ url_for('next_question') if not is_last else url_for('summary') }}"
+            method="{{ 'post' if not is_last else 'get' }}">
+        <button type="submit">{{ "See Session Summary" if is_last else "Next Question" }}</button>
+      </form>
+      <a class="footer-link" href="{{ url_for('restart') }}">Restart session</a>
+    </div>
+  </div>
+</body>
+</html>
